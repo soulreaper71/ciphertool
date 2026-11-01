@@ -10,12 +10,12 @@ def splash_animation(letter=0):
     greeting_label.config(text=full_text[:letter + 1])
 
     if letter < len(full_text) - 1:
-        boot.after(100, splash_animation, letter + 1)
+        boot.after(500, splash_animation, letter + 1)
 
 boot = tk.Tk()
 
-boot_width = 400
-boot_height = 200
+boot_width = 500
+boot_height = 300
 
 boot.title("Julius — Classical Cipher De/Encoder")
 x = boot.winfo_screenwidth()
@@ -27,7 +27,7 @@ boot.configure(background='#FFF5E6')
 
 
 style = ttk.Style()
-style.configure("title.TLabel", font=("Constantine",20,'bold'),foreground='#7F2122',padx=3,pady=3)
+style.configure("title.TLabel", font=("Praetorium BB",24,'bold'),foreground='#7F2122',padx=3,pady=3)
 
 greeting_label = ttk.Label(master=boot, style='title.TLabel', background=boot.cget("background"))
 
@@ -55,6 +55,6 @@ def main():
 
     root.mainloop()
 
-boot.after(3000,main)
+boot.after(4000,main)
 
 boot.mainloop() 
