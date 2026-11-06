@@ -1,60 +1,67 @@
 import tkinter as tk
 from tkinter import ttk
+import time
 
 
 # splash
 
-def splash_animation(letter=0):
+def splash_animation():
     full_text = "Welcome to Julius..."
+    typed_text = ""
+    root.overrideredirect(True)
 
-    greeting_label.config(text=full_text[:letter + 1])
+    root_width = 500
+    root_height = 300
 
-    if letter < len(full_text) - 1:
-        boot.after(500, splash_animation, letter + 1)
+    root.title("Julius — Classical Cipher De/Encoder")
+    x_root = root.winfo_screenwidth()
+    y_root = root.winfo_screenheight()
+    horizontal_pos_root = int(x_root/2-root_width/2)
+    vertical_pos_root = int(y_root/2-root_height/2)
+    root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+{vertical_pos_root}")
+    root.configure(background='#FFF5E6')
+    root.update()
 
-boot = tk.Tk()
+    for char in full_text:
+        typed_text += char
+        greeting_label.config(text=typed_text,background=root.cget("background"))
+        greeting_label.update()
+        time.sleep(0.1)
 
-boot_width = 500
-boot_height = 300
 
-boot.title("Julius — Classical Cipher De/Encoder")
-x = boot.winfo_screenwidth()
-y = boot.winfo_screenheight()
-horizontal_pos = int(x/2-400/2)
-vertical_pos = int(y/2-200/2)
-boot.geometry(f"{boot_width}x{boot_height}+{horizontal_pos}+{vertical_pos}")
-boot.configure(background='#FFF5E6')
+
+
+root = tk.Tk()
+
 
 
 style = ttk.Style()
 style.configure("title.TLabel", font=("Praetorium BB",24,'bold'),foreground='#7F2122',padx=3,pady=3)
 
-greeting_label = ttk.Label(master=boot, style='title.TLabel', background=boot.cget("background"))
+greeting_label = ttk.Label(master=root, style='title.TLabel', background=root.cget("background"))
 
 greeting_label.pack(pady=50)
 
-## TODO: Animate loading with greeting_label, configure dark and light modes using color pallettes in references, add naivgation buttons
 splash_animation()
 
-def main():
-    boot.destroy()
+greeting_label.destroy()
 
-    root = tk.Tk()
+## TODO: configure dark and light modes using color pallettes in references, add naivgation button
     
-    root_width = 500
-    root_height = 700
+root_width = 500
+root_height = 700
     
-    x = root.winfo_screenwidth()
-    y = root.winfo_screenheight()
-    horizontal_pos = int(x/2-500/2)
-    vertical_pos = int(y/2-700/2)
-    root.title("Julius — Classical Cipher De/Encoder")
-    root.geometry(f"{root_width}x{root_height}+{horizontal_pos}+{vertical_pos}")
-    root.configure(background='#FFF5E6')
+x_root = root.winfo_screenwidth()
+y_root = root.winfo_screenheight()
+horizontal_pos_root = int(x_root/2-root_width/2)
+vertical_pos_root = int(y_root/2-root_height/2)
+root.title("Julius — Classical Cipher De/Encoder")
+root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+{vertical_pos_root}")
+root.configure(background='#FFF5E6')
+root.overrideredirect(False)
 
 
-    root.mainloop()
+root.after(4000,root.update)
 
-boot.after(4000,main)
 
-boot.mainloop() 
+root.mainloop()
