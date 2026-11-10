@@ -24,7 +24,7 @@ def splash_animation():
         typed_text += char
         greeting_label.config(text=typed_text,background=root.cget("background"))
         greeting_label.update()
-        time.sleep(0.2)
+        time.sleep(0.15)
 
 def maximise_window():
     fullscreen_width = int(root.winfo_screenwidth())
@@ -33,14 +33,13 @@ def maximise_window():
     root.update()
 
 def restore_window():
-    root_width = 700
-    root_height = 900
+    root_width = 900
+    root_height = 1008
 
     x_root = root.winfo_screenwidth()
     y_root = root.winfo_screenheight()
     horizontal_pos_root = int(x_root/2-root_width/2)
-    vertical_pos_root = int(y_root/2-root_height/2)
-    root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+{vertical_pos_root}")
+    root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+0")
 
 drag_data = {"x": 0, "y": 0}
 
@@ -68,15 +67,14 @@ splash_animation()
 greeting_label.destroy()
 
 ## TODO: configure dark and light modes using color pallettes in references, add naivgation button
-root_width = 700
-root_height = 900
+root_width = 800
+root_height = 1008
     
 x_root = root.winfo_screenwidth()
 y_root = root.winfo_screenheight()
 horizontal_pos_root = int(x_root/2-root_width/2)
-vertical_pos_root = int(y_root/2-root_height/2)
 root.title("Julius — Classical Cipher De/Encoder")
-root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+{vertical_pos_root}")
+root.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+0")
 root.configure(background="#FAF1CA")
 root.columnconfigure(0,weight=1)
 root.overrideredirect(False)
@@ -97,20 +95,24 @@ maximise_button.grid(row=0,column=2,sticky="e")
 restore_button = tk.Button(master=title_bar, text="—",activeforeground="white",background=title_bar.cget("background"),relief='flat',foreground="#7F2122",font=("Helvetica",11,"bold"),width=3,command=restore_window)
 restore_button.grid(row=0,column=1,sticky="e")
 
+
+
 title_bar.bind("<Button-1>", start_move)
 title_bar.bind("<B1-Motion>", do_move)
 title_label.bind("<Button-1>", start_move)
 title_label.bind("<B1-Motion>", do_move)
 
-close_button.bind("<Enter>", lambda e: close_button.config(bg="#D32929"))
-close_button.bind("<Leave>", lambda e: close_button.config(bg=title_bar.cget("background")))
-maximise_button.bind("<Enter>", lambda e: maximise_button.config(bg="#5D6D7E"))
-maximise_button.bind("<Leave>", lambda e: maximise_button.config(bg=title_bar.cget("background")))
-restore_button.bind("<Enter>", lambda e: restore_button.config(bg="#5D6D7E"))
-restore_button.bind("<Leave>", lambda e: restore_button.config(bg=title_bar.cget("background")))
+close_button.bind("<Enter>", lambda e: close_button.config(bg="#D32929",fg="#FACD1E"))
+close_button.bind("<Leave>", lambda e: close_button.config(bg=title_bar.cget("background"),fg="#7F2122"))
+maximise_button.bind("<Enter>", lambda e: maximise_button.config(bg="#5D6D7E",fg="#D9A05B"))
+maximise_button.bind("<Leave>", lambda e: maximise_button.config(bg=title_bar.cget("background"),fg="#7F2122"))
+restore_button.bind("<Enter>", lambda e: restore_button.config(bg="#5D6D7E",fg="#D9A05B"))
+restore_button.bind("<Leave>", lambda e: restore_button.config(bg=title_bar.cget("background"),fg="#7F2122"))
 
 seperator = ttk.Separator(master=root)
 seperator.grid(row=1,column=0,sticky="ew")
+
+
 
 root.overrideredirect(True)
 root.after(10, root.focus_force)
