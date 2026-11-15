@@ -31,37 +31,12 @@ def start_caesar():
     caesar.geometry(f"{caesar_width}x{caesar_height}+{horizontal_pos_caesar}+0")
     caesar.configure(fg_color=("#FFF9D6","#2B2D42"))
     caesar.columnconfigure(0,weight=1)
-    root.overrideredirect(False)
+    if sys.platform.startswith('linux'):
+        caesar.wm_attributes('-type', 'splash')
+    else:
+        caesar.overrideredirect(True)
 
     create_title_bar(caesar,title_text="Julius - Caesar Cipher")
-
-    resize_grip = ctk.CTkLabel(
-            master=caesar,
-            text="◢",
-            font=("Arial", 14),
-            text_color=("gray40", "gray60"),
-            cursor="sizing",
-            width=20,
-            height=20
-        )
-
-
-    resize_grip.place(relx=1.0, rely=1.0, anchor="se", x=-2, y=-2)
-    resize_grip.bind("<Button-1>", lambda e: start_resize(e, caesar))
-    resize_grip.bind("<B1-Motion>", lambda e: do_resize(e, caesar))
-
-    mode_text = "☼" if ctk.get_appearance_mode() == "Dark" else "☽" 
-
-
-    mode_toggle = ctk.CTkButton(master=caesar, text=mode_text, hover_color=("#5D6D7E", "#FAF1CA"), fg_color="transparent", font=(
-        "Helvetica", 16, "bold"), text_color=("#7F2122", "#F4D03F"), width=30, corner_radius=0, command=toggle_mode)
-    mode_toggle.grid(row=2, column=0, sticky="e", padx=8, pady=6)
-    mode_toggle.bind("<Enter>", lambda e: mode_toggle.configure(
-        fg_color=("#5D6D7E", "#FAF1CA"), text_color=("#F4D03F", "#FACD1E")))
-    mode_toggle.bind("<Leave>", lambda e: mode_toggle.configure(
-        fg_color='transparent', text_color=("#7F2122", "#F4D03F")))
-
-    caesar.wm_attributes('-type', 'splash')
 
     caesar.update_idletasks()
 
@@ -70,6 +45,7 @@ def start_caesar():
     else:
         caesar.overrideredirect(True)
 
+    caesar.bind("``", lambda e: on_map(e, caesar))
 
 def create_title_bar(window, title_text="Julius - Classical cipher tool"):
     title_bar = ctk.CTkFrame(master=window, fg_color=("#FAF1CA", "#313342"))
@@ -124,15 +100,35 @@ def create_title_bar(window, title_text="Julius - Classical cipher tool"):
         btn.bind("<Leave>", lambda e, b=btn: b.configure(
             fg_color='transparent', text_color=("#7F2122", "#F4D03F")))
 
+    resize_grip = ctk.CTkLabel(
+        master=window,
+        text="◢",
+        font=("Arial", 14),
+        text_color=("gray40", "gray60"),
+        cursor="sizing",
+        width=20,
+        height=20
+    )
+    resize_grip.place(relx=1.0,rely=1.0,anchor="se",x=-2,y=-2)
+    resize_grip.bind("<Button-1>", lambda e: start_resize(e,window))
+    resize_grip.bind("<B1-Motion>", lambda e: do_resize(e,window))
+
+    mode_text = "☼" if ctk.get_appearance_mode() == "Dark" else "☽" 
+
+    mode_toggle = ctk.CTkButton(master=window,text=mode_text,hover_color=("#5D6D7E","#FAF1CA"),fg_color="transparent",font=("Helvetica",16,"bold"),text_color=("#7F2122","#F4D03F"),width=30,corner_radius=0,command=lambda: toggle_mode(mode_toggle))
+    mode_toggle.grid(row=2,column=0 ,sticky="e",padx=8,pady=6)
+    mode_toggle.bind("<Enter>", lambda e: mode_toggle.configure(fg_color=("#5D6D7E","#FAF1CA"),text_color=("#F4D03F","#FACD1E")))
+    mode_toggle.bind("<Leave>", lambda e: mode_toggle.configure(fg_color='transparent',text_color=("#7F2122","#F4D03F")))
+
     return title_bar
 
-def toggle_mode():
+def toggle_mode(button):
 
     if ctk.get_appearance_mode() == 'Dark':
-        mode_toggle.configure(text="☽")
+        button.configure(text="☽")
         ctk.set_appearance_mode("light")
     else:
-        mode_toggle.configure(text="☼")
+        button.configure(text="☼")
         ctk.set_appearance_mode("dark")
 
 
@@ -140,7 +136,8 @@ def toggle_mode():
 def splash_animation():
     full_text = "Welcome to Julius..."
     typed_text = ""
-    root.wm_attributes('-type','splash')
+    #root.wm_attributes('-type','splash')
+    root.overrideredirect(True)
 
     root_width = 500
     root_height = 300
@@ -158,6 +155,9 @@ def splash_animation():
         greeting_label.update()
         time.sleep(0.15)
 
+def on_map(event, window):
+    if not sys.platform.startswith('linux') and window.state() == 'normal':
+        window.overrideredirect(True)
 
 def maximise_window(window, button):
     x_root = window.winfo_screenwidth()
@@ -174,7 +174,10 @@ def maximise_window(window, button):
         button.configure(text="⮺")
         window.update()
     else:
-        window.wm_attributes('-type', 'normal')    
+        if sys.platform.startswith('linux'):
+            window.wm_attributes('-type', 'normal')    
+        else:
+            window.overrideredirect(True)
         window.update_idletasks()
         window.geometry(f"{root_width}x{root_height}+{horizontal_pos_root}+0")
         button.configure(text="☐")
@@ -188,21 +191,18 @@ def check_window_state(window):
         window.overrideredirect(True)  
         window.update_idletasks()
     else:
-    
-        window.after(300, check_window_state)
+        window.after(100, check_window_state)
+        window.state("iconic")
 
 
 def minimise_window(window):
 
     if sys.platform.startswith('linux'):
         window.iconify()
-
     else:
-    
         window.update_idletasks()
         window.overrideredirect(False)
         window.state("iconic")
-        check_window_state()
 
 
 drag_data = {"x": 0, "y": 0}
@@ -254,8 +254,7 @@ root.overrideredirect(False)
 create_title_bar(root,title_text="Julius - Classical Cipher Tool")
 
 
-
-welcome_frame= ctk.CTkFrame(master=root,fg_color=("#FAF1CA","#2B2D42"))
+welcome_frame= ctk.CTkFrame(master=root,fg_color=("#FAF1CA","#313342"))
 welcome_frame.grid(row=3,column=0,sticky="ns")
 
 caesar_button = ctk.CTkButton(master=welcome_frame,text="Caesar Cipher",width=200,height=100,corner_radius=15,font=("Castelforte",16,"bold"), command=start_caesar)
@@ -268,29 +267,12 @@ caesar_button.grid(row=3,column=0,sticky="ew",pady=20)
 # playfair_button = ctk.CTkButton()
 
 
+if sys.platform.startswith('linux'):
+    root.wm_attributes('-type', 'utility')
+else:
+    root.overrideredirect(True)
 
-
-resize_grip = ctk.CTkLabel(
-    master=root,
-    text="◢",
-    font=("Arial", 14),
-    text_color=("gray40", "gray60"),
-    cursor="sizing",
-    width=20,
-    height=20
-)
-resize_grip.place(relx=1.0,rely=1.0,anchor="se",x=-2,y=-2)
-resize_grip.bind("<Button-1>", lambda e: start_resize(e,root))
-resize_grip.bind("<B1-Motion>", lambda e: do_resize(e,root))
-
-mode_text = "☼" if ctk.get_appearance_mode() == "Dark" else "☽" 
-
-mode_toggle = ctk.CTkButton(master=root,text=mode_text,hover_color=("#5D6D7E","#FAF1CA"),fg_color="transparent",font=("Helvetica",16,"bold"),text_color=("#7F2122","#F4D03F"),width=30,corner_radius=0,command=toggle_mode)
-mode_toggle.grid(row=2,column=0 ,sticky="e",padx=8,pady=6)
-mode_toggle.bind("<Enter>", lambda e: mode_toggle.configure(fg_color=("#5D6D7E","#FAF1CA"),text_color=("#F4D03F","#FACD1E")))
-mode_toggle.bind("<Leave>", lambda e: mode_toggle.configure(fg_color='transparent',text_color=("#7F2122","#F4D03F")))
-
-root.wm_attributes('-type', 'utility')
+root.bind("``", lambda e: on_map(e, root))
 
 root.after(4000,root.update)
 
