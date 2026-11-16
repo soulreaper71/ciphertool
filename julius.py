@@ -1244,17 +1244,31 @@ def maximise_window(window, button):
 
 def check_window_state(window):
 
-    if window.state() != "iconic":
-        window.overrideredirect(True)
-        window.update_idletasks()
+    
+    if sys.platform.startswith('linux'):
+        if getattr(window,"is_minimized",False) and window.state() != "iconic":
+            window.is_minmized = False
+            window.wm_attributes('-type', 'normal')
+            window.update_idletasks()
+            window.wm_attributes('-type', 'utility')
+            window.update_idletasks()
+        elif window.state() == "iconic":
+            window.after(300, lambda: check_window_state(window))
     else:
-        window.after(300, lambda: check_window_state(window))
+        if window.state() != "iconic":
+            window.overrideredirect(True)
+            window.after(300, lambda: check_window_state(window))
 
+        else:
+            window.after(300, lambda: check_window_state(window))
+            window.state("iconic")
 
 def minimise_window(window):
 
     if sys.platform.startswith('linux'):
         window.iconify()
+        window.is_minimized = True
+        window.after(300,lambda: check_window_state(window))
     else:
         window.update_idletasks()
         window.overrideredirect(False)
